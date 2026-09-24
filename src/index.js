@@ -38,6 +38,7 @@ if (!process.env.JWT_SECRET) {
 // ── Security ──────────────────────────────────────────────────────────────────
 app.use(helmet());
 const allowedOrigins = [
+  'https://noahkhaemba.vercel.app',
   process.env.CLIENT_URL,
   process.env.ADMIN_URL,
   ...(process.env.ALLOWED_ORIGINS || '').split(','),
@@ -50,7 +51,7 @@ app.use(cors({
     if (!origin || allowedOrigins.includes(origin.replace(/\/$/, ''))) {
       return callback(null, true);
     }
-    return callback(new Error('Origin not allowed by CORS'));
+    return callback(null, false);
   },
   methods: ['GET', 'POST', 'PATCH', 'DELETE'],
   credentials: true,
