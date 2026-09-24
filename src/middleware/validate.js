@@ -81,6 +81,31 @@ export const validateArticle = (req, res, next) => {
   next();
 };
 
+// ── Testimonial ──────────────────────────────────────────────────────────────
+
+export const validateTestimonial = (req, res, next) => {
+  const { quote, name, role, company, avatarUrl, domain, rating, order, published } = req.body;
+  const errors = [];
+
+  if (!quote?.trim()) errors.push('quote is required');
+  if (quote?.length > 2000) errors.push('quote must be 2000 characters or fewer');
+  if (!name?.trim()) errors.push('name is required');
+  if (!role?.trim()) errors.push('role is required');
+  if (!company?.trim()) errors.push('company is required');
+  if (avatarUrl && !isValidUrl(avatarUrl)) errors.push('avatarUrl must be a valid URL');
+  if (domain?.length > 120) errors.push('domain must be 120 characters or fewer');
+  if (rating !== undefined && (!Number.isInteger(Number(rating)) || Number(rating) < 1 || Number(rating) > 5)) {
+    errors.push('rating must be an integer from 1 to 5');
+  }
+  if (order !== undefined && (!Number.isInteger(Number(order)) || Number(order) < 0)) {
+    errors.push('order must be a non-negative integer');
+  }
+  if (published !== undefined && typeof published !== 'boolean') errors.push('published must be a boolean');
+
+  if (errors.length) return res.status(400).json({ success: false, errors });
+  next();
+};
+
 // ── Project Image ─────────────────────────────────────────────────────────────
 
 export const validateImage = (req, res, next) => {

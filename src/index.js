@@ -13,12 +13,14 @@ import cvRouter          from './routes/cv.js';
 import articlesRouter    from './routes/articles.js';
 import technologiesRouter from './routes/technologies.js';
 import messagesRouter    from './routes/messages.js';
+import testimonialsRouter from './routes/testimonials.js';
 
 // Ensure all Mongoose models are registered at startup
 import './models/Tag.js';
 import './models/Technology.js';
 import './models/ProjectImage.js';
 import './models/EngineeringDecision.js';
+import './models/Testimonial.js';
 
 const app  = express();
 const PORT = process.env.PORT || 5000;
@@ -91,6 +93,7 @@ app.use('/api/cv',           cvRouter);
 app.use('/api/articles',     articlesRouter);
 app.use('/api/technologies', technologiesRouter);
 app.use('/api/messages',     messagesRouter);
+app.use('/api/testimonials', testimonialsRouter);
 
 app.get('/api/health', (_req, res) =>
   res.json({ status: 'OK', timestamp: new Date().toISOString() }),
