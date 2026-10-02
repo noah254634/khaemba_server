@@ -55,7 +55,7 @@ export const uploadAvatar = async (req, res) => {
 export const uploadCv = async (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ success: false, error: 'Please select a PDF file.' });
+      return res.status(400).json({ success: false, error: 'Please select a valid document file (.pdf, .doc, .docx).' });
     }
 
     const { url } = await uploadToR2(req.file.buffer, req.file.originalname, req.file.mimetype);

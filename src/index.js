@@ -94,12 +94,15 @@ app.use((req, res, next) => {
 
 import profileRouter     from './routes/profile.js';
 import decisionsRouter   from './routes/decisions.js';
+import analyticsRouter   from './routes/analytics.js';
+import './models/AnalyticsVisit.js';
 
 // ── Routes ────────────────────────────────────────────────────────────────────
 app.use('/api/auth',         authRouter);
 app.use('/api/profile',      profileRouter);
 app.use('/api/projects',     projectsRouter);
 app.use('/api/decisions',    decisionsRouter);
+app.use('/api/analytics',    analyticsRouter);
 app.use('/api/contact',      contactRouter);
 app.use('/api/github',       githubRouter);
 app.use('/api/cv',           cvRouter);
