@@ -1,4 +1,5 @@
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import sharp from 'sharp';
 
 const R2_ACCOUNT_ID       = process.env.R2_ACCOUNT_ID;
 const R2_ACCESS_KEY_ID   = process.env.R2_ACCESS_KEY_ID;
@@ -17,17 +18,36 @@ const s3Client = new S3Client({
 
 /**
  * Uploads an in-memory buffer to Cloudflare R2 bucket.
+ * Automatically compresses images to high-quality WebP format with sharp.
  * Returns the public R2 URL and unique object key.
  */
 export const uploadToR2 = async (buffer, originalName, mimeType) => {
-  const fileExt = originalName.split('.').pop() || 'png';
+  let uploadBuffer = buffer;
+  let finalMimeType = mimeType;
+  let fileExt = originalName.split('.').pop() || 'png';
+
+  // Automatically compress & convert bitmap images to WebP
+  if (mimeType && mimeType.startsWith('image/') && !mimeType.includes('svg')) {
+    try {
+      uploadBuffer = await sharp(buffer)
+        .resize({ width: 1920, height: 1920, fit: 'inside', withoutEnlargement: true })
+        .webp({ quality: 82, effort: 4 })
+        .toBuffer();
+      finalMimeType = 'image/webp';
+      fileExt = 'webp';
+    } catch (err) {
+      console.warn('⚠️ [Sharp Optimization Failed - using original buffer]:', err.message);
+    }
+  }
+
   const fileKey = `projects/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
 
   const command = new PutObjectCommand({
     Bucket: R2_BUCKET_NAME,
     Key: fileKey,
-    Body: buffer,
-    ContentType: mimeType,
+    Body: uploadBuffer,
+    ContentType: finalMimeType,
+    CacheControl: 'public, max-age=31536000, immutable',
   });
 
   await s3Client.send(command);

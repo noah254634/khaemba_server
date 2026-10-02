@@ -3,7 +3,8 @@ import { clearCache } from '../middleware/fastCache.js';
 
 export const index = async (req, res) => {
   try {
-    const decisions = await decisionService.getAllDecisions(req.params.slug);
+    const slug = req.params.slug;
+    const decisions = slug ? await decisionService.getAllDecisions(slug) : await decisionService.getAllGlobalDecisions();
     if (decisions === null)
       return res.status(404).json({ success: false, error: 'Project not found.' });
     res.json({ success: true, count: decisions.length, data: decisions });

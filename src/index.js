@@ -93,11 +93,13 @@ app.use((req, res, next) => {
 });
 
 import profileRouter     from './routes/profile.js';
+import decisionsRouter   from './routes/decisions.js';
 
 // ── Routes ────────────────────────────────────────────────────────────────────
 app.use('/api/auth',         authRouter);
 app.use('/api/profile',      profileRouter);
 app.use('/api/projects',     projectsRouter);
+app.use('/api/decisions',    decisionsRouter);
 app.use('/api/contact',      contactRouter);
 app.use('/api/github',       githubRouter);
 app.use('/api/cv',           cvRouter);
